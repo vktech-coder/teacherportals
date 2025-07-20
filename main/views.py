@@ -111,7 +111,6 @@ def forgot_password(request):
 
     return render(request, 'teacher/forgot_password.html')
 
-
 def delete_student(request, id):
     Student.objects.filter(id=id).delete()
     return redirect('home')
