@@ -27,7 +27,6 @@ def home(request):
     form = StudentForm()
     return render(request, 'teacher/home.html', {'students': students, 'form': form})
     
-
 def add_student(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
