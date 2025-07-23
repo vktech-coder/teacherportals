@@ -39,26 +39,56 @@ def home(request):
     teacher_name = request.session.get('teacher_name', 'Guest')
 
     return render(request, 'teacher/home.html', {'students': students, 'form': form, 'teacher_name': teacher_name})
-    
+
 def add_student(request):
     if request.method == 'POST':
-        form = StudentForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            subject = form.cleaned_data['subject']
-            marks = form.cleaned_data['marks']
+        name = request.POST.get('name')
+        subject = request.POST.get('subject')
+        marks = int(request.POST.get('marks'))
 
-            student, created = Student.objects.get_or_create(
-                name=name,
-                subject=subject,
-                defaults={'marks': marks}
-            )
-            
+        student, created = Student.objects.get_or_create(
+            name=name,
+            subject=subject,
+            defaults={'marks': marks}
+        )
+        if not created:
+            student.marks += marks
+            student.save()
 
-            if not created:
-                student.marks += marks
-                student.save()
-    return redirect('home')
+        return redirect('home')
+
+
+# def add_student(request):
+#     if request.method == 'POST':
+#         form = StudentForm(request.POST)
+#         if form.is_valid():
+#             name = form.cleaned_data['name'].strip().lower().title()
+#             subject = form.cleaned_data['subject'].strip().lower().title()
+#             marks = form.cleaned_data['marks']
+
+#             print("Form Submitted:", name, subject, marks)  # ✅ print debug
+
+#             student, created = Student.objects.get_or_create(
+#                 name=name,
+#                 subject=subject,
+#                 defaults={'marks': marks}
+#             )
+
+#             print("Created:", created)  # ✅ check if existing or new
+#             print("Before update:", student.marks)
+
+#             if not created:
+#                 student.marks += marks
+#                 student.save()
+#                 print("Updated marks to:", student.marks)  # ✅ verify update
+#             else:
+#                 print("New student added")
+
+#             return redirect('home')
+#         else:
+#             print("Form Invalid")
+#     return redirect('home')
+
 
 def edit_student(request, id):
     student = Student.objects.get(id=id)
